@@ -1,33 +1,31 @@
-def gv
 pipeline{
 	agent any
-	parameters{
-		choice(name: 'VERSION',choices: ['1.1','1.2','1.3'], description:'')
+	tools{
+		maven 'maven-3.9'
 	}
 	stages{
-		stage("build"){
+		stage("build jar"){
 			steps{
-				echo 'building the application'
+				echo "building the application.."
+				sh 'mvn package'
 			}
 		}
-		stage("test"){
-                        steps{
-                                echo 'testing the application'
-                        }
-                }
-		stage("deploy"){
-			input{
-				message "Select the environment to deploy to"
-				ok "Done"
-				parameters{
-					choice(name: 'ENV',choices: ['dev','staging','prod'], description:'')
+		stage("build image"){
+			steps{
+				echo "building the docker image"
+				withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]){
+					sh 'docker build -t chintu413/demo-app:jma-2.0 .'
+					sh 'echo $PASS docker login -u $USER --password-stdin'
+					sh 'docker push chintu413/demo-app:jma-2.0'
 				}
 			}
-                        steps{
-                                echo 'deploying the application'
-				echo "Deploy to ${ENV}"
-                        }
-                }
-
+		}
+		stage("build jar"){
+			steps{
+				echo "building the application.."
+				sh 'mvn package'
+			}
+		}
+		
 	}
 }
