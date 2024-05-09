@@ -20,10 +20,10 @@ pipeline{
 				}
 			}
 		}
-		stage("build jar"){
+		stage("deploy"){
 			steps{
-				echo "building the application.."
-				sh 'mvn package'
+				echo "deploying the application.."
+				
 			}
 		}
 		
