@@ -25,7 +25,7 @@ pipeline{
 			}
                         steps{
                                 echo 'deploying the application'
-				echo 'Deploy to ${ENV}"
+				echo "Deploy to ${ENV}"
                         }
                 }
 
